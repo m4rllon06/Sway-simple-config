@@ -1,0 +1,6 @@
+# backups e temporários
+*~
+*.bak
+*.swp
+.directory
+.DS_Store

@@ -1,0 +1,226 @@
+# ~/.config/sway/config
+# Sway minimalista — foot + fuzzel + waybar
+
+### Variáveis
+set $mod   Mod4
+set $left  h
+set $down  j
+set $up    k
+set $right l
+set $term  foot
+set $menu  fuzzel
+
+### Paleta (preto acinzentado)
+set $bg       #111111
+set $surface  #1a1a1a
+set $line     #2a2a2a
+set $fg       #c8c8c8
+set $dim      #6a6a6a
+set $accent   #8a9aab
+set $urgent   #b35c5c
+
+### Aparência
+font pango:Iosevka Nerd Font 10
+default_border pixel 1
+titlebar_padding 6 2
+gaps inner 4
+gaps outer 0
+smart_gaps on
+smart_borders on
+
+# classe                borda      fundo      texto  indicador  borda_filho
+client.focused          $accent    $surface   $fg    $accent    $accent
+client.focused_inactive $line      $bg        $dim   $line      $line
+client.unfocused        $line      $bg        $dim   $line      $line
+client.urgent           $urgent    $urgent    $bg    $urgent    $urgent
+client.background       $bg
+
+### Saída / wallpaper
+# output * bg youwallpaper.jpg fill
+# Monitores: liste com `swaymsg -t get_outputs`
+# Ajuste para suas situações
+output HDMI-A-1 mode 1920x1080@144.000Hz position 0 0 adaptive_sync on
+output eDP-1 mode 1920x1080@60.001Hz position 1920 0
+
+# Workspaces no externo, no notebook
+# Workspaces monitor primario!
+workspace 1  output HDMI-A-1 eDP-1
+workspace 3  output HDMI-A-1 eDP-1
+workspace 5  output HDMI-A-1 eDP-1
+workspace 7  output HDMI-A-1 eDP-1
+
+# Workspaces segundo monitor (Notebook)
+workspace 2  output eDP-1 HDMI-A-1
+workspace 4  output eDP-1 HDMI-A-1
+workspace 6  output eDP-1 HDMI-A-1
+workspace 8  output eDP-1 HDMI-A-1
+# Começa com o foco no externo
+exec swaymsg focus output HDMI-A-1
+
+# Fechar a tampa desliga a tela do notebook
+bindswitch --reload --locked lid:on  output eDP-1 disable
+bindswitch --reload --locked lid:off output eDP-1 enable
+
+# Mover workspace/janela entre monitores
+bindsym $mod+comma        focus output left
+bindsym $mod+period       focus output right
+bindsym $mod+Shift+comma  move workspace to output left
+bindsym $mod+Shift+period move workspace to output right
+
+### Entrada
+input type:keyboard {
+    xkb_layout br
+    repeat_delay 300
+    repeat_rate 40
+}
+
+input type:touchpad {
+    tap enabled
+    natural_scroll enabled
+    dwt enabled
+}
+
+### Bloqueio e inatividade (opcional)
+exec swayidle -w \
+    timeout 300 'swaylock -f -c 111111' \
+    timeout 600 'swaymsg "output * power off"' \
+    resume 'swaymsg "output * power on"' \
+    before-sleep 'swaylock -f -c 111111'
+
+### Atalhos básicos
+bindsym $mod+Return exec $term
+bindsym $mod+d exec $menu
+bindsym $mod+q kill
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Sair do sway?' -B 'Sim' 'swaymsg exit'
+bindsym $mod+Escape exec swaylock -f -c 111111
+floating_modifier $mod normal
+
+### Foco
+bindsym $mod+$left  focus left
+bindsym $mod+$down  focus down
+bindsym $mod+$up    focus up
+bindsym $mod+$right focus right
+bindsym $mod+Left   focus left
+bindsym $mod+Down   focus down
+bindsym $mod+Up     focus up
+bindsym $mod+Right  focus right
+
+### Mover janelas
+bindsym $mod+Shift+$left  move left
+bindsym $mod+Shift+$down  move down
+bindsym $mod+Shift+$up    move up
+bindsym $mod+Shift+$right move right
+bindsym $mod+Shift+Left   move left
+bindsym $mod+Shift+Down   move down
+bindsym $mod+Shift+Up     move up
+bindsym $mod+Shift+Right  move right
+
+### Workspaces
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+
+### Layout
+bindsym $mod+b splith
+bindsym $mod+v splitv
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+bindsym $mod+f fullscreen
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+bindsym $mod+a focus parent
+
+### Scratchpad
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
+### Redimensionar
+mode "resize" {
+    bindsym $left  resize shrink width 20px
+    bindsym $down  resize grow height 20px
+    bindsym $up    resize shrink height 20px
+    bindsym $right resize grow width 20px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+### Teclas de mídia (PipeWire / WirePlumber)
+bindsym XF86AudioRaiseVolume  exec wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+
+bindsym XF86AudioLowerVolume  exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym XF86AudioMute         exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym XF86AudioMicMute      exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+
+### Screenshots (grim + slurp)
+bindsym Print       exec grim - | wl-copy
+bindsym Shift+Print exec grim -g "$(slurp)" - | wl-copy
+
+### Barra
+bar {
+    swaybar_command waybar
+}
+
+### Notificações
+exec mako
+
+### Janelas flutuantes por padrão (estilo Plasma/GNOME)
+# Toda janela nova abre flutuando, com barra de título, centralizada.
+# $mod+Shift+space devolve a janela para o modo lado a lado (tiling).
+for_window [app_id=".*"] floating enable, border normal 2, move position center
+for_window [class=".*"]  floating enable, border normal 2, move position center
+
+floating_minimum_size 360 x 240
+floating_maximum_size -1 x -1
+title_align center
+titlebar_border_thickness 1
+focus_follows_mouse no
+focus_on_window_activation focus
+mouse_warping none
+
+# Maximizar / restaurar (como o duplo clique no título)
+bindsym $mod+m       resize set width 100 ppt height 100 ppt, move position 0 0
+bindsym $mod+Shift+m resize set width 60 ppt height 70 ppt, move position center
+bindsym $mod+c       move position center
+
+# Alt+Tab entre janelas do workspace
+bindsym Mod1+Tab       focus next
+bindsym Mod1+Shift+Tab focus prev
+
+# Mouse: arrastar a barra de título move a janela; arrastar a borda redimensiona.
+# Com Super segurado dá para arrastar clicando em qualquer ponto da janela:
+#   botão esquerdo = mover, botão direito = redimensionar
+tiling_drag enable
+tiling_drag_threshold 9
+# Clique do meio na barra de título fecha a janela
+bindsym --border button2 kill
+# Bordas mais largas facilitam pegar com o mouse
+default_floating_border normal 2
+
+### Regras de janela
+for_window [app_id="pavucontrol"] floating enable
+for_window [window_role="pop-up"] floating enable
+for_window [window_type="dialog"] floating enable
+
+# Mantém a integração do Fedora (portais, systemd --user, etc.)
+include /etc/sway/config.d/*
